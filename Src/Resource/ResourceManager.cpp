@@ -6,8 +6,6 @@
 #include <format>
 #include <fstream>
 
-import stb_image;
-
 namespace ar
 {
 	/// <summary>

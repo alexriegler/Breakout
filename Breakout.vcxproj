@@ -118,6 +118,7 @@
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)Src/Game;$(ProjectDir)Src/Main;$(ProjectDir)Src/Renderer;$(ProjectDir)Src/Resource;$(ProjectDir)Src/Utilities;$(ProjectDir)Src/Window;$(ProjectDir)Src/Resource/Shader;$(ProjectDir)Src/Resource/Texture</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +139,7 @@
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)Src/Game;$(ProjectDir)Src/Main;$(ProjectDir)Src/Renderer;$(ProjectDir)Src/Resource;$(ProjectDir)Src/Utilities;$(ProjectDir)Src/Window;$(ProjectDir)Src/Resource/Shader;$(ProjectDir)Src/Resource/Texture</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -158,6 +160,7 @@
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)Src/Game;$(ProjectDir)Src/Main;$(ProjectDir)Src/Renderer;$(ProjectDir)Src/Resource;$(ProjectDir)Src/Utilities;$(ProjectDir)Src/Window;$(ProjectDir)Src/Resource/Shader;$(ProjectDir)Src/Resource/Texture</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,6 +181,7 @@
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
       <DisableAnalyzeExternal>true</DisableAnalyzeExternal>
       <TreatWarningAsError>true</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)Src/Game;$(ProjectDir)Src/Main;$(ProjectDir)Src/Renderer;$(ProjectDir)Src/Resource;$(ProjectDir)Src/Utilities;$(ProjectDir)Src/Window;$(ProjectDir)Src/Resource/Shader;$(ProjectDir)Src/Resource/Texture</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -187,32 +191,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="shader.fs" />
-    <None Include="shader.vs" />
+    <None Include="Resources\shader.fs" />
+    <None Include="Resources\shader.vs" />
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Breakout.cpp" />
-    <ClCompile Include="ImageResource.cpp" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderProgram.cpp" />
-    <ClCompile Include="stb_image.ixx" />
-    <ClCompile Include="Texture2D.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Src\Game\Breakout.cpp" />
+    <ClCompile Include="Src\Resource\Texture\ImageResource.cpp" />
+    <ClCompile Include="Src\Main\Main.cpp" />
+    <ClCompile Include="Src\Resource\ResourceManager.cpp" />
+    <ClCompile Include="Src\Resource\Shader\Shader.cpp" />
+    <ClCompile Include="Src\Resource\Shader\ShaderProgram.cpp" />
+    <ClCompile Include="Src\Resource\Texture\stb_image.ixx" />
+    <ClCompile Include="Src\Resource\Texture\Texture2D.cpp" />
+    <ClCompile Include="Src\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Breakout.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="ImageResource.h" />
-    <ClInclude Include="Renderer.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderProgram.h" />
-    <ClInclude Include="Texture2D.h" />
-    <ClInclude Include="Utilities.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="Src\Game\Breakout.h" />
+    <ClInclude Include="Src\Game\Game.h" />
+    <ClInclude Include="Src\Resource\Texture\ImageResource.h" />
+    <ClInclude Include="Src\Renderer\Renderer.h" />
+    <ClInclude Include="Src\Resource\ResourceManager.h" />
+    <ClInclude Include="Src\Resource\Shader\Shader.h" />
+    <ClInclude Include="Src\Resource\Shader\ShaderProgram.h" />
+    <ClInclude Include="Src\Resource\Texture\Texture2D.h" />
+    <ClInclude Include="Src\Utilities\Utilities.h" />
+    <ClInclude Include="Src\Window\Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

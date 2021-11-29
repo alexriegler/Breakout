@@ -27,7 +27,7 @@ namespace ar
 	{
 	public:
 		// Aliases
-		using id_type = GLuint;
+		using ID_type = GLuint;
 
 		// Constructor
 		Shader(std::string_view source, ShaderType type);
@@ -44,16 +44,17 @@ namespace ar
 		Shader& operator=(Shader&& other) noexcept;
 
 		// Functions
-		[[nodiscard]] id_type id() const noexcept;
-		void attach_to(id_type program_id);
-		void detach_from(id_type program_id);
+		[[nodiscard]] ID_type id() const noexcept;
+		void attach_to(ID_type program_id);
+		void detach_from(ID_type program_id);
 
 	private:
-		[[nodiscard]] id_type compile(std::string_view source) const;
+		[[nodiscard]] ID_type compile(std::string_view source) const;
+		static void check_for_errors(ID_type id, ShaderType type);
 
 		// Data
 		ShaderType m_type{ ShaderType::invalid };
-		id_type m_id{ 0 };
+		ID_type m_id{ 0 };
 	};
 
 	/// <summary>

@@ -20,7 +20,7 @@ namespace ar
 	{
 	public:
 		// Aliases
-		using id_type = GLuint;
+		using ID_type = GLuint;
 
 		// Constructors
 		ShaderProgram(Shader& vertex_shader, Shader& fragment_shader);
@@ -61,11 +61,11 @@ namespace ar
 		void set_mat4(std::string_view name, const glm::mat4& mat) const;
 
 	private:
-		id_type link(gsl::not_null<Shader*> vertex_shader,
+		ID_type link(gsl::not_null<Shader*> vertex_shader,
 				     gsl::not_null<Shader*> fragment_shader,
 				     Shader* geometry_shader = nullptr);
 
 		// Data
-		id_type m_id{ 0 };
+		ID_type m_id{ 0 };
 	};
 }

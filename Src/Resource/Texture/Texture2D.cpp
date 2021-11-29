@@ -95,7 +95,7 @@ namespace ar
 	/// Gets the id of the texture.
 	/// </summary>
 	/// <returns>Id of the texture</returns>
-	Texture2D::id_type Texture2D::id() const noexcept
+	Texture2D::ID_type Texture2D::id() const noexcept
 	{
 		return m_id;
 	}

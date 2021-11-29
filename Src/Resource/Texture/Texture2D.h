@@ -47,7 +47,7 @@ namespace ar
 	{
 	public:
 		// Aliases
-		using id_type = GLuint;
+		using ID_type = GLuint;
 
 		// Constructor
 		Texture2D(
@@ -76,7 +76,7 @@ namespace ar
 		Texture2D& operator=(Texture2D&& other) noexcept;
 
 		// Functions
-		[[nodiscard]] id_type id() const noexcept;
+		[[nodiscard]] ID_type id() const noexcept;
 		void bind();
 		void unbind();
 
@@ -85,7 +85,7 @@ namespace ar
 		void set_filtering(TextureFiltering filtering);
 
 		// Data
-		id_type m_id{ 0 };
+		ID_type m_id{ 0 };
 		int m_width{ 0 };
 		int m_height{ 0 };
 	};

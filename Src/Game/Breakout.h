@@ -19,8 +19,6 @@ namespace ar
 		win
 	};
 
-	//void frame_buffer_size_callback(GLFWwindow*, int, int);
-
 	class Breakout : public Game
 	{
 	public:

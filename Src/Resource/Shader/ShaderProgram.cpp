@@ -119,7 +119,7 @@ namespace ar
 		glUniformMatrix4fv(glGetUniformLocation(m_id, name.data()), 1, GL_FALSE, glm::value_ptr(mat));
 	}
 
-	ShaderProgram::id_type ShaderProgram::link(gsl::not_null<Shader*> vertex_shader,
+	ShaderProgram::ID_type ShaderProgram::link(gsl::not_null<Shader*> vertex_shader,
 											   gsl::not_null<Shader*> fragment_shader,
 											   Shader* geometry_shader)
 	{

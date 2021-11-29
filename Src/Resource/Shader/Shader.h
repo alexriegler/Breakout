@@ -50,7 +50,7 @@ namespace ar
 
 	private:
 		[[nodiscard]] ID_type compile(std::string_view source) const;
-		static void check_for_errors(ID_type id, ShaderType type);
+		static void check_for_compiling_errors(ID_type id, ShaderType type);
 
 		// Data
 		ShaderType m_type{ ShaderType::invalid };

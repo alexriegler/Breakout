@@ -53,7 +53,6 @@ namespace ar
 	/// </summary>
 	void ShaderProgram::use()
 	{
-		// TODO: Error checking
 		glUseProgram(m_id);
 	}
 
@@ -119,44 +118,45 @@ namespace ar
 		glUniformMatrix4fv(glGetUniformLocation(m_id, name.data()), 1, GL_FALSE, glm::value_ptr(mat));
 	}
 
+	/// <summary>
+	/// Links the shaders together to create a shader program.
+	/// </summary>
+	/// <param name="vertex_shader">The vertex shader</param>
+	/// <param name="fragment_shader">The fragment shader</param>
+	/// <param name="geometry_shader">Optional. The geometry shader</param>
+	/// <returns></returns>
 	ShaderProgram::ID_type ShaderProgram::link(gsl::not_null<Shader*> vertex_shader,
 											   gsl::not_null<Shader*> fragment_shader,
 											   Shader* geometry_shader)
 	{
 		const auto id = glCreateProgram();
-
-		// Attach shaders
-		// TODO: RAII attacher/detacher
-		vertex_shader->attach_to(id);
-		fragment_shader->attach_to(id);
-		if (geometry_shader != nullptr)
-		{
-			geometry_shader->attach_to(id);
-		}
-
-		// Link shader program
+		const std::array shaders{ static_cast<Shader*>(vertex_shader),
+								  static_cast<Shader*>(fragment_shader),
+								  geometry_shader };
+		auto attacher = Attacher( id, shaders );
 		glLinkProgram(id);
-
-		// Check for linking errors
-		int success;
-		glGetProgramiv(id, GL_LINK_STATUS, &success);
-		if (!success)
-		{
-			// TODO: Get size of message first
-			constexpr auto size = 512;
-			std::string info_log(size, '\0');
-			glGetProgramInfoLog(id, size, nullptr, info_log.data());
-			throw std::runtime_error{ std::format("Failed to link shader program:\n{0}\n", info_log) };
-		}
-
-		// Detach shaders
-		if (geometry_shader != nullptr)
-		{
-			geometry_shader->detach_from(id);
-		}
-		fragment_shader->detach_from(id);
-		vertex_shader->detach_from(id);
-
+		check_for_linking_errors(id);
 		return id;
+	}
+
+	/// <summary>
+	/// Checks for shader linking errors and throws an error if found.
+	/// </summary>
+	/// <param name="id">The ID of the shader program</param>
+	void ShaderProgram::check_for_linking_errors(ID_type id)
+	{
+		GLint is_linked = 0;
+		glGetProgramiv(id, GL_LINK_STATUS, &is_linked);
+		if (is_linked == GL_FALSE)
+		{
+			GLint max_length = 0;
+			glGetProgramiv(id, GL_INFO_LOG_LENGTH, &max_length);
+			std::basic_string<GLchar> info_log{};
+			info_log.resize(max_length);
+			glGetProgramInfoLog(id, max_length, &max_length, info_log.data());
+			throw std::runtime_error{
+				std::format("Failed to link shader program:\n{}\n", info_log)
+			};
+		}
 	}
 }

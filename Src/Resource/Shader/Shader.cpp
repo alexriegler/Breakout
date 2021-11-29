@@ -74,7 +74,6 @@ namespace ar
 	/// <param name="program_id">The ID of the program to attach to</param>
 	void Shader::attach_to(Shader::ID_type program_id)
 	{
-		// TODO: Add error checking
 		glAttachShader(program_id, m_id);
 	}
 
@@ -84,7 +83,6 @@ namespace ar
 	/// <param name="program_id">The ID of the program to detach from</param>
 	void Shader::detach_from(Shader::ID_type program_id)
 	{
-		// TODO: Add error checking
 		glDetachShader(program_id, m_id);
 	}
 
@@ -101,24 +99,36 @@ namespace ar
 			const char* csource = source.data();
 			glShaderSource(id, 1, &csource, nullptr);
 			glCompileShader(id);
-
-			// Check for compiler errors
-			int success;
-			glGetShaderiv(id, GL_COMPILE_STATUS, &success);
-			if (!success)
-			{
-				// TODO: Get size of message first
-				constexpr auto size = 512;
-				std::string info_log(size, '\0');
-				glGetShaderInfoLog(id, size, nullptr, info_log.data());
-				throw std::runtime_error{ std::format("Compilation of {} shader failed:\n{}\n", string_rep(m_type), info_log) };
-			}
-
+			check_for_compiling_errors(id, m_type);
 			return id;
 		}
 		else
 		{
 			throw std::runtime_error{ std::format("Invalid shader type.\n") };
+		}
+	}
+
+	/// <summary>
+	/// Checks for shader compiling errors and throws an error if found.
+	/// </summary>
+	/// <param name="id">The ID of the shader</param>
+	/// <param name="type">The type of the shader</param>
+	void Shader::check_for_compiling_errors(ID_type id, ShaderType type)
+	{
+		GLint is_compiled = 0;
+		glGetShaderiv(id, GL_COMPILE_STATUS, &is_compiled);
+		if (is_compiled == GL_FALSE)
+		{
+			GLint max_length = 0;
+			glGetShaderiv(id, GL_INFO_LOG_LENGTH, &max_length);
+			std::basic_string<GLchar> info_log{};
+			info_log.resize(max_length);
+			glGetShaderInfoLog(id, max_length, &max_length, info_log.data());
+			throw std::runtime_error{
+				std::format("Compilation of {} shader failed:\n{}\n",
+				string_rep(type),
+				info_log)
+			};
 		}
 	}
 }

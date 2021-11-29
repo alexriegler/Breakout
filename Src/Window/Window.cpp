@@ -2,7 +2,45 @@
 
 #include <gsl/gsl>
 
+#include <format>
+#include <iostream>
 #include <stdexcept>
+
+namespace
+{
+	/// <summary>
+	/// Callback used for debug messages.
+	/// </summary>
+	/// <param name="source">The source of the message</param>
+	/// <param name="type">The type of the message</param>
+	/// <param name="id">The ID of the message</param>
+	/// <param name="severity">The severity of the message</param>
+	/// <param name="length">The length of the message parameter</param>
+	/// <param name="message">The message string</param>
+	/// <param name="user_param">Set to the value passed in the userParam parameter to the most recent call to glDebugMessageCallback</param>
+	void GLAPIENTRY message_callback(GLenum /*source*/,
+									 GLenum type,
+									 GLuint /*id*/,
+									 GLenum severity,
+									 GLsizei /*length*/,
+									 const GLchar* message,
+									 const void* /*user_param*/)
+	{
+		const std::string msg = std::format("GL CALLBACK: {} type = {:#x}, severity = {:#x}, message = {}\n",
+									        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+											type,
+											severity,
+											message);
+		if (type == GL_DEBUG_TYPE_ERROR)
+		{
+			throw std::runtime_error{ msg };
+		}
+		else
+		{
+			std::cerr << msg;
+		}
+	}
+}
 
 namespace ar
 {
@@ -16,11 +54,16 @@ namespace ar
 		m_window = create_window();
 		load_functions();
 
-		// TODO: Abstract away
+		// TODO: Add functions to configure window
 		// Configuration
 		glViewport(0, 0, m_width, m_height);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+#ifdef _DEBUG
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback(message_callback, nullptr);
+#endif // _DEBUG
 	}
 
 	// Destructor
@@ -120,7 +163,8 @@ namespace ar
 		{
 			throw std::runtime_error{ "Failed to initialize GLFW library" };
 		}
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		// TODO: Add option to specify OpenGL version in constructor
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	}

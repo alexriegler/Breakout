@@ -32,12 +32,12 @@ namespace ar
 		Expects(height > 0 && width > 0);
 
 		glGenTextures(1, &m_id);
-		
+
 		glBindTexture(GL_TEXTURE_2D, m_id);
-		
+
 		set_wrapping(wrapping);
 		set_filtering(filtering);
-		
+
 		// Load data
 		glTexImage2D(
 			GL_TEXTURE_2D, 0, to_underlying(format),
@@ -46,7 +46,7 @@ namespace ar
 
 		// Generate mipmap
 		glGenerateMipmap(GL_TEXTURE_2D);
-		
+
 		// Unbind
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -95,7 +95,7 @@ namespace ar
 	/// Gets the id of the texture.
 	/// </summary>
 	/// <returns>Id of the texture</returns>
-	Texture2D::ID_type Texture2D::id() const noexcept
+	Texture2D::id_type Texture2D::id() const noexcept
 	{
 		return m_id;
 	}

@@ -196,6 +196,7 @@
     <None Include="vcpkg.json" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Renderer\SpriteRenderer.cpp" />
     <ClCompile Include="Src\Game\Breakout.cpp" />
     <ClCompile Include="Src\Resource\Texture\ImageResource.cpp" />
     <ClCompile Include="Src\Main\Main.cpp" />
@@ -207,6 +208,7 @@
     <ClCompile Include="Src\Window\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Renderer\SpriteRenderer.h" />
     <ClInclude Include="Src\Game\Breakout.h" />
     <ClInclude Include="Src\Game\Game.h" />
     <ClInclude Include="Src\Resource\Texture\ImageResource.h" />

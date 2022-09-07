@@ -38,7 +38,7 @@ namespace ar
 		void late_update() override;
 		void render() override;
 		void on_game_pause() override;
-		
+
 		// State
 		bool is_running() const override;
 		bool is_paused() const override;
@@ -46,6 +46,7 @@ namespace ar
 	private:
 		// Input
 		void process_input();
+		void init();
 
 		// Constants
 		static constexpr auto max_keys = 1024;

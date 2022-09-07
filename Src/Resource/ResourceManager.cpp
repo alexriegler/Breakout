@@ -79,7 +79,7 @@ namespace ar
 	{
 		auto texture = Texture2D{ ImageResource{ texture_path }, format };
 		auto t_ptr = std::make_unique<Texture2D>(std::move(texture));
-		auto [it, success] = m_textures.insert({ std::string{name}, std::move(t_ptr) });
+		const auto [it, success] = m_textures.insert({ std::string{name}, std::move(t_ptr) });
 		if (success)
 		{
 			return *(it->second);
@@ -114,7 +114,8 @@ namespace ar
 	// properly de-allocates all loaded resources
 	void ResourceManager::clear()
 	{
-		// TODO: Implement. Probably map function.
+		m_shader_programs.clear();
+		m_textures.clear();
 	}
 
 	/// <summary>

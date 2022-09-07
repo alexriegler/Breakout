@@ -22,9 +22,10 @@ namespace ar
 	{
 	public:
 		// Aliases
-		using ID_type = GLuint;
+		using id_type = GLuint;
 
 		// Constructors
+		ShaderProgram() = default;
 		ShaderProgram(Shader& vertex_shader, Shader& fragment_shader);
 		ShaderProgram(Shader& vertex_shader, Shader& fragment_shader, Shader& geometry_shader);
 
@@ -40,7 +41,7 @@ namespace ar
 		ShaderProgram& operator=(ShaderProgram&& other) noexcept;
 
 		// Functions
-		void use();
+		ShaderProgram& use();
 
 		// Utility uniform functions
 		void set_bool(std::string_view name, bool value) const;
@@ -63,13 +64,13 @@ namespace ar
 		void set_mat4(std::string_view name, const glm::mat4& mat) const;
 
 	private:
-		[[nodiscard]] ID_type link(gsl::not_null<Shader*> vertex_shader,
+		[[nodiscard]] id_type link(gsl::not_null<Shader*> vertex_shader,
 			gsl::not_null<Shader*> fragment_shader,
 			Shader* geometry_shader = nullptr);
-		static void check_for_linking_errors(ID_type id);
+		static void check_for_linking_errors(id_type id);
 
 		// Data
-		ID_type m_id{ 0 };
+		id_type m_id{ 0 };
 	};
 
 	/// <summary>
@@ -81,7 +82,7 @@ namespace ar
 	{
 	public:
 		// Constructor
-		Attacher(const ShaderProgram::ID_type id, std::array<Shader*, N> shaders)
+		Attacher(const ShaderProgram::id_type id, std::array<Shader*, N> shaders)
 			: m_id{ id }, m_shaders{ shaders }
 		{
 			for (auto* shader : m_shaders)
@@ -128,7 +129,7 @@ namespace ar
 		}
 
 	private:
-		ShaderProgram::ID_type m_id{ 0 };
+		ShaderProgram::id_type m_id{ 0 };
 		std::array<Shader*, N> m_shaders{};
 	};
 }

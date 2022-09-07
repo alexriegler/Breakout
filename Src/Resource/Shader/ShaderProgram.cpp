@@ -49,11 +49,13 @@ namespace ar
 
 	// Functions
 	/// <summary>
-	/// Make the shader the active shader
+	/// Sets the current shader as active.
 	/// </summary>
-	void ShaderProgram::use()
+	/// <returns>This shader</returns>
+	ShaderProgram& ShaderProgram::use()
 	{
 		glUseProgram(m_id);
+		return *this;
 	}
 
 	// Utility uniform functions
@@ -125,7 +127,7 @@ namespace ar
 	/// <param name="fragment_shader">The fragment shader</param>
 	/// <param name="geometry_shader">Optional. The geometry shader</param>
 	/// <returns></returns>
-	ShaderProgram::ID_type ShaderProgram::link(gsl::not_null<Shader*> vertex_shader,
+	ShaderProgram::id_type ShaderProgram::link(gsl::not_null<Shader*> vertex_shader,
 											   gsl::not_null<Shader*> fragment_shader,
 											   Shader* geometry_shader)
 	{
@@ -143,7 +145,7 @@ namespace ar
 	/// Checks for shader linking errors and throws an error if found.
 	/// </summary>
 	/// <param name="id">The ID of the shader program</param>
-	void ShaderProgram::check_for_linking_errors(ID_type id)
+	void ShaderProgram::check_for_linking_errors(id_type id)
 	{
 		GLint is_linked = 0;
 		glGetProgramiv(id, GL_LINK_STATUS, &is_linked);

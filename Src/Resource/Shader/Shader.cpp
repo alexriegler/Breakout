@@ -63,7 +63,7 @@ namespace ar
 	/// Gets the id of the compiled shader.
 	/// </summary>
 	/// <returns>Id of the compiled shader</returns>
-	Shader::ID_type Shader::id() const noexcept
+	Shader::id_type Shader::id() const noexcept
 	{
 		return m_id;
 	}
@@ -72,7 +72,7 @@ namespace ar
 	/// Attaches the shader to the specified program.
 	/// </summary>
 	/// <param name="program_id">The ID of the program to attach to</param>
-	void Shader::attach_to(Shader::ID_type program_id)
+	void Shader::attach_to(Shader::id_type program_id)
 	{
 		glAttachShader(program_id, m_id);
 	}
@@ -81,7 +81,7 @@ namespace ar
 	/// Detaches the shader from the specified program.
 	/// </summary>
 	/// <param name="program_id">The ID of the program to detach from</param>
-	void Shader::detach_from(Shader::ID_type program_id)
+	void Shader::detach_from(Shader::id_type program_id)
 	{
 		glDetachShader(program_id, m_id);
 	}
@@ -91,7 +91,7 @@ namespace ar
 	/// </summary>
 	/// <param name="source">The source code of the shader</param>
 	/// <returns>The id of the compiled shader</returns>
-	Shader::ID_type Shader::compile(std::string_view source) const
+	Shader::id_type Shader::compile(std::string_view source) const
 	{
 		if (m_type != ShaderType::invalid)
 		{
@@ -113,7 +113,7 @@ namespace ar
 	/// </summary>
 	/// <param name="id">The ID of the shader</param>
 	/// <param name="type">The type of the shader</param>
-	void Shader::check_for_compiling_errors(ID_type id, ShaderType type)
+	void Shader::check_for_compiling_errors(id_type id, ShaderType type)
 	{
 		GLint is_compiled = 0;
 		glGetShaderiv(id, GL_COMPILE_STATUS, &is_compiled);

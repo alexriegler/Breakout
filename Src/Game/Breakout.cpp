@@ -1,27 +1,45 @@
 #include "Breakout.h"
 
+#include "ResourceManager.h"
+#include "SpriteRenderer.h"
+
 namespace ar
 {
+	std::unique_ptr<SpriteRenderer> renderer = nullptr;
+
 	// Constructor
 	Breakout::Breakout()
 	{
-		// Set window user pointer (required for callbacks)
-		glfwSetWindowUserPointer(m_window.native_ptr(), this);
-
-		// Set callbacks
-		glfwSetKeyCallback(m_window.native_ptr(), key_callback);
-		glfwSetFramebufferSizeCallback(m_window.native_ptr(), frame_buffer_size_callback);
+		init();
 	}
 
 	Breakout::Breakout(int width, int height)
 		: m_width{ width }, m_height{ height }
 	{
+		init();
+	}
+
+	void Breakout::init()
+	{
 		// Set window user pointer (required for callbacks)
 		glfwSetWindowUserPointer(m_window.native_ptr(), this);
 
 		// Set callbacks
 		glfwSetKeyCallback(m_window.native_ptr(), key_callback);
 		glfwSetFramebufferSizeCallback(m_window.native_ptr(), frame_buffer_size_callback);
+
+		// Load shaders
+		auto& sprite_shader = ResourceManager::instance().load_shader_program("sprite", "Resources/sprite.vert", "Resources/sprite.frag");
+		// Configure shaders
+		sprite_shader.use();
+		sprite_shader.set_int("image", 0);
+		const glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(m_width), static_cast<float>(m_height), 0.0f, -1.0f, 1.0f);
+		sprite_shader.set_mat4("projection", projection);
+		// Set render-specific controls
+		renderer = std::make_unique<SpriteRenderer>(std::move(sprite_shader));
+		ResourceManager::instance().clear();
+		// Load textures
+		ResourceManager::instance().load_texture("face", "Resources/awesomeface.png", TextureFormat::rgba);
 	}
 
 	// Functions
@@ -46,6 +64,9 @@ namespace ar
 		// Background
 		glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		renderer->draw_sprite(ResourceManager::instance().get_texture("face"),
+			glm::vec2(200.0f, 200.0f), glm::vec2(300.0f, 400.0f), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		// Check and call events and swap the buffers
 		glfwSwapBuffers(m_window.native_ptr());

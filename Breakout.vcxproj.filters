@@ -19,10 +19,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="vcpkg.json" />
-    <None Include="Resources\shader.fs">
+    <None Include="Resources\sprite.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Resources\shader.vs">
+    <None Include="Resources\sprite.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

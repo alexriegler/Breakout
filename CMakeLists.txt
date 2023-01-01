@@ -37,8 +37,6 @@ target_include_directories(
 target_compile_features(Breakout_lib PUBLIC cxx_std_17)
 
 # 3rd party libraries
-find_package(fmt REQUIRED)
-target_link_libraries(Breakout_lib PUBLIC fmt::fmt)
 find_package(glad CONFIG REQUIRED)
 target_link_libraries(Breakout_lib PUBLIC glad::glad)
 find_package(glfw3 CONFIG REQUIRED)

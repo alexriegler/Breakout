@@ -11,7 +11,7 @@ include(Catch)
 
 # ---- Tests ----
 
-add_executable(Breakout_test source/Breakout_test.cpp)
+add_executable(Breakout_test src/Breakout_test.cpp)
 target_link_libraries(
     Breakout_test PRIVATE
     Breakout_lib

@@ -37,10 +37,7 @@ jobs:
 
     runs-on: ubuntu-22.04
 
-    # To enable coverage, delete the last line from the conditional below and
-    # edit the "<name>" placeholder to your GitHub name.
-    # If you do not wish to use codecov, then simply delete this job from the
-    # workflow.
+    # Ensure this action is not run from other people's forks
     if: github.repository_owner == 'alexriegler'
 
     steps:
@@ -76,36 +73,39 @@ jobs:
       with:
         file: build/coverage/coverage.info
 
-# TODO: Implement sanitize ci step
-  #sanitize:
-  #  needs: [lint]
+  sanitize:
+    needs: [lint]
 
-  #  runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04
 
-  #  steps:
-  #  - uses: actions/checkout@v3
+    steps:
+    - uses: actions/checkout@v3
 
-  #  - name: Install vcpkg
-  #    uses: friendlyanon/setup-vcpkg@v1
-  #    with: { committish: "${{ env.VCPKG_COMMIT }}" }
+    - name: Install GLFW3 dependencies
+      run: sudo apt-get update -q
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config -q -y
 
-  #  - name: Configure
-  #    env: { CXX: clang++-14 }
-  #    run: cmake --preset=ci-sanitize
+    - name: Install vcpkg
+      uses: friendlyanon/setup-vcpkg@v1
+      with: { committish: "${{ env.VCPKG_COMMIT }}" }
 
-  #  - name: Build
-  #    run: cmake --build build/sanitize -j 2
+    - name: Configure
+      env: { CXX: clang++-14 }
+      run: cmake --preset=ci-sanitize
 
-  #  - name: Test
-  #    working-directory: build/sanitize
-  #    env:
-  #      ASAN_OPTIONS: "strict_string_checks=1:\
-  #        detect_stack_use_after_return=1:\
-  #        check_initialization_order=1:\
-  #        strict_init_order=1:\
-  #        detect_leaks=1"
-  #      UBSAN_OPTIONS: print_stacktrace=1
-  #    run: ctest --output-on-failure -j 2
+    - name: Build
+      run: cmake --build build/sanitize -j 2
+
+    - name: Test
+      working-directory: build/sanitize
+      env:
+        ASAN_OPTIONS: "strict_string_checks=1:\
+          detect_stack_use_after_return=1:\
+          check_initialization_order=1:\
+          strict_init_order=1:\
+          detect_leaks=1"
+        UBSAN_OPTIONS: print_stacktrace=1
+      run: ctest --output-on-failure -j 2
 
   test:
     needs: [lint]

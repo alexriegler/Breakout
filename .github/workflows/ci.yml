@@ -112,8 +112,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-2022]
-        #os: [macos-12, ubuntu-22.04, windows-2022]
+        os: [macos-12, ubuntu-22.04, windows-2022]
 
     runs-on: ${{ matrix.os }}
 
@@ -128,6 +127,11 @@ jobs:
         sudo update-alternatives --install
         /usr/bin/clang-tidy clang-tidy
         /usr/bin/clang-tidy-14 140
+
+    - name: Install GLFW3 dependencies
+      if: matrix.os == 'ubuntu-22.04'
+      run: sudo apt-get update -q
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config -q -y
 
     - name: Install vcpkg
       uses: friendlyanon/setup-vcpkg@v1
@@ -149,8 +153,7 @@ jobs:
 
   docs:
     # Deploy docs only when builds succeed
-    needs: [test]
-    #needs: [sanitize, test]
+    needs: [sanitize, test]
 
     runs-on: ubuntu-22.04
 

@@ -1,5 +1,7 @@
 # Breakout
 
+[![codecov](https://codecov.io/gh/alexriegler/Breakout/branch/master/graph/badge.svg?token=BOEJ9SCHBC)](https://codecov.io/gh/alexriegler/Breakout)
+
 This is the Breakout project.
 
 # Building and installing

@@ -1,6 +1,6 @@
 # Breakout
 
-[![codecov](https://codecov.io/gh/alexriegler/Breakout/branch/master/graph/badge.svg?token=BOEJ9SCHBC)](https://codecov.io/gh/alexriegler/Breakout)
+[![ci](https://github.com/alexriegler/Breakout/actions/workflows/ci.yml/badge.svg)](https://github.com/alexriegler/Breakout/actions/workflows/ci.yml) [![codecov](https://codecov.io/gh/alexriegler/Breakout/branch/master/graph/badge.svg?token=BOEJ9SCHBC)](https://codecov.io/gh/alexriegler/Breakout)
 
 This is the Breakout project.
 

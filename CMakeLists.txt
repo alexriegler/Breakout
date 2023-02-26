@@ -22,7 +22,9 @@ add_library(
         "src/shader.h" "src/shader.cpp"
         "src/texture.h" "src/texture.cpp"
         "src/resource_manager.h" "src/resource_manager.cpp"
-        "src/sprite_renderer.h" "src/sprite_renderer.cpp")
+        "src/sprite_renderer.h" "src/sprite_renderer.cpp"
+        "src/game_object.h" "src/game_object.cpp"
+        "src/game_level.h" "src/game_level.cpp")
 
 target_include_directories(
     Breakout_lib ${warning_guard}
@@ -67,6 +69,12 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/textures
             $<TARGET_FILE_DIR:Breakout_exe>/textures)
+
+add_custom_command(
+    TARGET Breakout_exe POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/levels
+            $<TARGET_FILE_DIR:Breakout_exe>/levels)
 
 # ---- Install rules ----
 

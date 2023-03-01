@@ -24,7 +24,8 @@ add_library(
         "src/resource_manager.h" "src/resource_manager.cpp"
         "src/sprite_renderer.h" "src/sprite_renderer.cpp"
         "src/game_object.h" "src/game_object.cpp"
-        "src/game_level.h" "src/game_level.cpp")
+        "src/game_level.h" "src/game_level.cpp"
+        "src/ball_object.h" "src/ball_object.cpp")
 
 target_include_directories(
     Breakout_lib ${warning_guard}

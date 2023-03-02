@@ -9,6 +9,7 @@
 #include "ball_object.h"
 #include "game.h"
 #include "game_object.h"
+#include "particle_generator.h"
 #include "resource_manager.h"
 #include "sprite_renderer.h"
 
@@ -17,6 +18,7 @@
 SpriteRenderer* Renderer;
 GameObject* Player;
 BallObject* Ball;
+ParticleGenerator* Particles;
 
 Game::Game(unsigned int width, unsigned int height)
     : State(GAME_ACTIVE)
@@ -31,6 +33,7 @@ Game::~Game()
   delete Renderer;
   delete Player;
   delete Ball;
+  delete Particles;
 }
 
 void Game::Init()
@@ -38,6 +41,8 @@ void Game::Init()
   // load shaders
   ResourceManager::LoadShader(
       "shaders/sprite.vert", "shaders/sprite.frag", nullptr, "sprite");
+  ResourceManager::LoadShader(
+      "shaders/particle.vert", "shaders/particle.frag", nullptr, "particle");
   // configure shaders
   glm::mat4 projection = glm::ortho(0.0f,
                                     static_cast<float>(this->Width),
@@ -47,8 +52,8 @@ void Game::Init()
                                     1.0f);
   ResourceManager::GetShader("sprite").Use().SetInteger("image", 0);
   ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
-  // set render-specific controls
-  Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+  ResourceManager::GetShader("particle").Use().SetInteger("sprite", 0);
+  ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
   // load textures
   // TODO: Set a default directory for textures, etc.
   // TODO: Default name of a texture should the file's name without the
@@ -59,6 +64,12 @@ void Game::Init()
   ResourceManager::LoadTexture(
       "textures/block_solid.png", false, "block_solid");
   ResourceManager::LoadTexture("textures/paddle.png", true, "paddle");
+  ResourceManager::LoadTexture("textures/particle.png", true, "particle");
+  // set render-specific controls
+  Renderer = new SpriteRenderer(ResourceManager::GetShader("sprite"));
+  Particles = new ParticleGenerator(ResourceManager::GetShader("particle"),
+                                    ResourceManager::GetTexture("particle"),
+                                    500);
   // load levels
   // TODO: Improve level loading
   GameLevel one;
@@ -94,6 +105,9 @@ void Game::Update(float dt)
   Ball->Move(dt, this->Width);
   // check for collisions
   this->DoCollisions();
+  // update particles
+  Particles->Update(dt, *Ball, 2, glm::vec2(Ball->Radius / 2.0f));
+  // check loss condition
   if (Ball->Position.y >= this->Height)  // did ball reach bottom edge?
   {
     this->ResetLevel();
@@ -137,6 +151,8 @@ void Game::Render()
     this->Levels[this->Level].Draw(*Renderer);
     // draw player
     Player->Draw(*Renderer);
+    // draw particles
+    Particles->Draw();
     // draw ball
     Ball->Draw(*Renderer);
   }

@@ -27,7 +27,8 @@ add_library(
         "src/game_level.h" "src/game_level.cpp"
         "src/ball_object.h" "src/ball_object.cpp"
         "src/particle_generator.h" "src/particle_generator.cpp"
-        "src/post_processor.h" "src/post_processor.cpp")
+        "src/post_processor.h" "src/post_processor.cpp"
+        "src/power_up.h")
 
 target_include_directories(
     Breakout_lib ${warning_guard}

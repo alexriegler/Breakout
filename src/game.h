@@ -10,9 +10,10 @@
 #define GAME_H
 
 #include "game_level.h"
+#include "power_up.h"
 
 // clang-format off
-#include <glad/glad.h>
+#include <glad/glad.h>  // GLAD must be included before GLFW
 #include <GLFW/glfw3.h>
 // clang-format on
 
@@ -62,6 +63,7 @@ public:
   bool Keys[1024];
   unsigned int Width, Height;
   std::vector<GameLevel> Levels;
+  std::vector<PowerUp> PowerUps;
   unsigned int Level;
   // constructor/destructor
   Game(unsigned int width, unsigned int height);
@@ -76,6 +78,9 @@ public:
   // reset
   void ResetLevel();
   void ResetPlayer();
+  // powerups
+  void SpawnPowerUps(GameObject& block);
+  void UpdatePowerUps(float dt);
 };
 
 #endif

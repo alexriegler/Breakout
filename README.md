@@ -4,6 +4,14 @@
 
 This is the Breakout project.
 
+# Supported platforms
+
+All supported platforms are 64-bit.
+
+* Linux gcc
+* Mac OS X gcc
+* Windows
+
 # Building and installing
 
 See the [BUILDING](BUILDING.md) document.

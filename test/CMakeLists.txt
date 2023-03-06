@@ -19,6 +19,15 @@ target_link_libraries(
 )
 target_compile_features(Breakout_test PRIVATE cxx_std_17)
 
+if(WIN32)
+    add_custom_command(
+        TARGET Breakout_test POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+                "${irrKlang_BINARY_DIR}/irrKlang.dll"
+                "${irrKlang_BINARY_DIR}/ikpMP3.dll"
+                "$<TARGET_FILE_DIR:Breakout_test>")
+endif()
+
 catch_discover_tests(Breakout_test)
 
 # ---- End-of-file commands ----

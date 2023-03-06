@@ -13,6 +13,13 @@ project(
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/lib")
+
+# ---- Options ----
+
+option(DISABLE_AUDIO "Build ${PROJECT_NAME} without the ability to output audio" OFF)
+
 # ---- Declare library ----
 
 add_library(
@@ -38,16 +45,27 @@ target_include_directories(
 
 target_compile_features(Breakout_lib PUBLIC cxx_std_17)
 
+if (DISABLE_AUDIO)
+    target_compile_definitions(Breakout_lib PRIVATE DISABLE_AUDIO=1)
+endif()
+
 # ---- 3rd party libraries ----
+
 find_package(glad CONFIG REQUIRED)
 target_link_libraries(Breakout_lib PUBLIC glad::glad)
+
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(Breakout_lib PUBLIC glfw)
+
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(Breakout_lib PUBLIC glm::glm)
 
 find_path(STB_INCLUDE_DIRS "stb_c_lexer.h")
 target_include_directories(Breakout_lib PRIVATE ${STB_INCLUDE_DIRS})
+
+find_package(irrKlang REQUIRED)
+target_include_directories(Breakout_lib SYSTEM PUBLIC ${irrKlang_INCLUDE_DIRS})
+target_link_libraries(Breakout_lib PUBLIC ${irrKlang_LIBRARIES})
 
 # ---- Declare executable ----
 
@@ -60,7 +78,7 @@ target_compile_features(Breakout_exe PRIVATE cxx_std_17)
 
 target_link_libraries(Breakout_exe PRIVATE Breakout_lib)
 
-# ---- Resources ----
+# ---- Copy resources ----
 
 add_custom_command(
     TARGET Breakout_exe POST_BUILD
@@ -79,6 +97,31 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/levels
             $<TARGET_FILE_DIR:Breakout_exe>/levels)
+
+add_custom_command(
+    TARGET Breakout_exe POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/audio
+            $<TARGET_FILE_DIR:Breakout_exe>/audio)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Sanitize")
+    add_custom_command(
+    TARGET Breakout_exe POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/.suppressions.supp
+            $<TARGET_FILE_DIR:Breakout_exe>/.suppressions.supp)
+endif()
+
+# ---- Copy libraries (.dll) ----
+
+if(WIN32)
+    add_custom_command(
+        TARGET Breakout_exe POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${irrKlang_BINARY_DIR}/irrKlang.dll"
+                "${irrKlang_BINARY_DIR}/ikpMP3.dll"
+                "$<TARGET_FILE_DIR:Breakout_exe>")
+endif()
 
 # ---- Install rules ----
 

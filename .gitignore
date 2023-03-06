@@ -376,3 +376,6 @@ cmake-build-*/
 prefix/
 CMakeLists.txt.user
 CMakeUserPresets.json
+
+# 3rd party libraries exceptions
+!lib/irrKlang-64bit-1.6.0/bin

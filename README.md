@@ -12,6 +12,24 @@ All supported platforms are 64-bit.
 * Mac OS X gcc
 * Windows
 
+# Dependencies
+
+## Linux
+
+On Linux, you must install the following libraries:
+
+### GLFW
+
+```
+sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config
+```
+
+### SFML
+
+```
+sudo apt install libudev-dev libopenal-dev libvorbis-dev libflac-dev
+```
+
 # Building and installing
 
 See the [BUILDING](BUILDING.md) document.

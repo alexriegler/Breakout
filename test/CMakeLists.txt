@@ -4,6 +4,12 @@
 
 project(BreakoutTests LANGUAGES CXX)
 
+# ---- C++ options ----
+
+set(CMAKE_CXX_STANDARD "17")
+set(CMAKE_CXX_STANDARD_REQUIRED "ON")
+set(CMAKE_CXX_EXTENSIONS "OFF")
+
 # ---- Dependencies ----
 
 find_package(Catch2 REQUIRED)
@@ -17,16 +23,18 @@ target_link_libraries(
     Breakout_lib
     Catch2::Catch2WithMain
 )
-target_compile_features(Breakout_test PRIVATE cxx_std_17)
 
-if(WIN32)
+# ---- Copy dependencies (.dll) ----
+
+if (WIN32 AND NOT DISABLE_AUDIO)
     add_custom_command(
         TARGET Breakout_test POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
-                "${irrKlang_BINARY_DIR}/irrKlang.dll"
-                "${irrKlang_BINARY_DIR}/ikpMP3.dll"
-                "$<TARGET_FILE_DIR:Breakout_test>")
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${SFML_SOURCE_DIR}/extlibs/bin/x64/openal32.dll"
+        $<TARGET_FILE_DIR:Breakout_test>)
 endif()
+
+# ---- Register tests ----
 
 catch_discover_tests(Breakout_test)
 

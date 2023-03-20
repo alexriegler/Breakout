@@ -47,9 +47,9 @@ jobs:
       run: sudo apt-get update -q
         && sudo apt-get install lcov -q -y
 
-    - name: Install GLFW3 dependencies
+    - name: Install dependencies
       run: sudo apt-get update -q
-        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config -q -y
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev -q -y
 
     - name: Install vcpkg
       uses: friendlyanon/setup-vcpkg@v1
@@ -81,9 +81,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install GLFW3 dependencies
+    - name: Install dependencies
       run: sudo apt-get update -q
-        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config -q -y
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev -q -y
 
     - name: Install vcpkg
       uses: friendlyanon/setup-vcpkg@v1
@@ -128,10 +128,10 @@ jobs:
         /usr/bin/clang-tidy clang-tidy
         /usr/bin/clang-tidy-14 140
 
-    - name: Install GLFW3 dependencies
+    - name: Install dependencies
       if: matrix.os == 'ubuntu-22.04'
       run: sudo apt-get update -q
-        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config -q -y
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev -q -y
 
     - name: Install vcpkg
       uses: friendlyanon/setup-vcpkg@v1

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.25)
 
 include(cmake/prelude.cmake)
 
@@ -10,15 +10,33 @@ project(
     LANGUAGES CXX
 )
 
+# ---- CMake configuration ----
+
 include(cmake/project-is-top-level.cmake)
 include(cmake/variables.cmake)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/lib")
+set(BUILD_SHARED_LIBS "OFF")
+
+# ---- C++ options ----
+
+set(CMAKE_CXX_STANDARD "17")
+set(CMAKE_CXX_STANDARD_REQUIRED "ON")
+set(CMAKE_CXX_EXTENSIONS "OFF")
 
 # ---- Options ----
 
 option(DISABLE_AUDIO "Build ${PROJECT_NAME} without the ability to output audio" OFF)
+
+# ---- Compiler options ----
+
+add_library(Breakout_compiler_flags INTERFACE)
+
+set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
+set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
+target_compile_options(Breakout_compiler_flags INTERFACE
+    "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wpedantic;-Wconversion;-Wsign-conversion;-Wcast-qual;-Wformat=2;-Wundef;-Werror=float-equal;-Wshadow;-Wcast-align;-Wunused;-Wnull-dereference;-Wdouble-promotion;-Wimplicit-fallthrough;-Wextra-semi;-Woverloaded-virtual;-Wnon-virtual-dtor;-Wold-style-cast>>"
+    "$<${msvc_cxx}:$<BUILD_INTERFACE:-utf-8;-w14165;-w44242;-w44254;-w44263;-w34265;-w34287;-w44296;-w44365;-w44388;-w44464;-w14545;-w14546;-w14547;-w14549;-w14555;-w34619;-w34640;-w24826;-w14905;-w14906;-w14928;-w45038;-W4;-permissive-;-volatile:iso;-Zc:preprocessor;-Zc:__cplusplus;-Zc:externConstexpr;-Zc:throwingNew;-EHsc>>"
+)
 
 # ---- Declare library ----
 
@@ -35,7 +53,8 @@ add_library(
         "src/ball_object.h" "src/ball_object.cpp"
         "src/particle_generator.h" "src/particle_generator.cpp"
         "src/post_processor.h" "src/post_processor.cpp"
-        "src/power_up.h")
+        "src/power_up.h"
+        "src/sound_engine.h" "src/sound_engine.cpp")
 
 target_include_directories(
     Breakout_lib ${warning_guard}
@@ -43,11 +62,11 @@ target_include_directories(
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
 )
 
-target_compile_features(Breakout_lib PUBLIC cxx_std_17)
-
 if (DISABLE_AUDIO)
     target_compile_definitions(Breakout_lib PRIVATE DISABLE_AUDIO=1)
 endif()
+
+target_link_libraries(Breakout_lib PUBLIC Breakout_compiler_flags)
 
 # ---- 3rd party libraries ----
 
@@ -63,9 +82,21 @@ target_link_libraries(Breakout_lib PUBLIC glm::glm)
 find_path(STB_INCLUDE_DIRS "stb_c_lexer.h")
 target_include_directories(Breakout_lib PRIVATE ${STB_INCLUDE_DIRS})
 
-find_package(irrKlang REQUIRED)
-target_include_directories(Breakout_lib SYSTEM PUBLIC ${irrKlang_INCLUDE_DIRS})
-target_link_libraries(Breakout_lib PUBLIC ${irrKlang_LIBRARIES})
+if (NOT DISABLE_AUDIO)
+    include(FetchContent)
+    FetchContent_Declare(
+        SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 2.6.x
+        SYSTEM  # Requires CMake 3.25+
+    )
+    FetchContent_MakeAvailable(SFML)
+    set(SFML_BUILD_AUDIO    "ON")
+    set(SFML_BUILD_GRAPHICS "OFF")
+    set(SFML_BUILD_WINDOW   "OFF")
+    set(SFML_BUILD_NETWORK  "OFF")
+    target_link_libraries(Breakout_lib PUBLIC sfml-audio)
+endif()
 
 # ---- Declare executable ----
 
@@ -73,8 +104,6 @@ add_executable(Breakout_exe "src/main.cpp")
 add_executable(Breakout::exe ALIAS Breakout_exe)
 
 set_property(TARGET Breakout_exe PROPERTY OUTPUT_NAME Breakout)
-
-target_compile_features(Breakout_exe PRIVATE cxx_std_17)
 
 target_link_libraries(Breakout_exe PRIVATE Breakout_lib)
 
@@ -104,23 +133,14 @@ add_custom_command(
             ${CMAKE_SOURCE_DIR}/audio
             $<TARGET_FILE_DIR:Breakout_exe>/audio)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Sanitize")
-    add_custom_command(
-    TARGET Breakout_exe POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_SOURCE_DIR}/.suppressions.supp
-            $<TARGET_FILE_DIR:Breakout_exe>/.suppressions.supp)
-endif()
+# ---- Copy dependencies (.dll) ----
 
-# ---- Copy libraries (.dll) ----
-
-if(WIN32)
+if (WIN32 AND NOT DISABLE_AUDIO)
     add_custom_command(
         TARGET Breakout_exe POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                "${irrKlang_BINARY_DIR}/irrKlang.dll"
-                "${irrKlang_BINARY_DIR}/ikpMP3.dll"
-                "$<TARGET_FILE_DIR:Breakout_exe>")
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${SFML_SOURCE_DIR}/extlibs/bin/x64/openal32.dll"
+        $<TARGET_FILE_DIR:Breakout_exe>)
 endif()
 
 # ---- Install rules ----

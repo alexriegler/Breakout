@@ -60,6 +60,7 @@ Shader& ResourceManager::loadShaderFromFile(const char* vShaderFile,
                                             const char* fShaderFile,
                                             const char* gShaderFile)
 {
+  // TODO: Check if file exists
   // 1. retrieve the vertex/fragment source code from filePath
   std::string vertexCode;
   std::string fragmentCode;

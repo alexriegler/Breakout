@@ -54,7 +54,8 @@ add_library(
         "src/particle_generator.h" "src/particle_generator.cpp"
         "src/post_processor.h" "src/post_processor.cpp"
         "src/power_up.h"
-        "src/sound_engine.h" "src/sound_engine.cpp")
+        "src/sound_engine.h" "src/sound_engine.cpp"
+        "src/text_renderer.h" "src/text_renderer.cpp")
 
 target_include_directories(
     Breakout_lib ${warning_guard}
@@ -98,6 +99,9 @@ if (NOT DISABLE_AUDIO)
     target_link_libraries(Breakout_lib PUBLIC sfml-audio)
 endif()
 
+find_package(freetype CONFIG REQUIRED)
+target_link_libraries(Breakout_lib PUBLIC freetype)
+
 # ---- Declare executable ----
 
 add_executable(Breakout_exe "src/main.cpp")
@@ -132,6 +136,12 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/audio
             $<TARGET_FILE_DIR:Breakout_exe>/audio)
+
+add_custom_command(
+    TARGET Breakout_exe POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/fonts
+            $<TARGET_FILE_DIR:Breakout_exe>/fonts)
 
 # ---- Copy dependencies (.dll) ----
 

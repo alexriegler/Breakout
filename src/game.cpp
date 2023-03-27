@@ -14,8 +14,11 @@
 #include "resource_manager.h"
 #include "sound_engine.h"
 #include "sprite_renderer.h"
+#include "text_renderer.h"
 
 #include <algorithm>
+#include <iostream>
+#include <sstream>
 
 // TODO: Use smart pointers
 // Game-related State data
@@ -25,14 +28,18 @@ BallObject* Ball;
 ParticleGenerator* Particles;
 PostProcessor* Effects;
 SoundEngine soundEngine {};
+TextRenderer* Text;
 
 float ShakeTime = 0.0f;
 
 Game::Game(unsigned int width, unsigned int height)
-    : State(GAME_ACTIVE)
+    : State(GAME_MENU)
     , Keys()
+    , KeysProcessed()
     , Width(width)
     , Height(height)
+    , Level(0)
+    , Lives(3)
 {
 }
 
@@ -43,6 +50,7 @@ Game::~Game()
   delete Ball;
   delete Particles;
   delete Effects;
+  delete Text;
 }
 
 void Game::Init()
@@ -97,6 +105,8 @@ void Game::Init()
                                     500);
   Effects = new PostProcessor(
       ResourceManager::GetShader("postprocessing"), this->Width, this->Height);
+  Text = new TextRenderer(this->Width, this->Height);
+  Text->Load("fonts/OCRAEXT.TTF", 24);
   // load levels
   // TODO: Improve level loading
   GameLevel one;
@@ -153,13 +163,50 @@ void Game::Update(float dt)
   // check loss condition
   if (Ball->Position.y >= this->Height)  // did ball reach bottom edge?
   {
+    --this->Lives;
+    // did the player lose all his lives? : game over
+    if (this->Lives == 0) {
+      this->ResetLevel();
+      this->State = GAME_MENU;
+    }
+    this->ResetPlayer();
+  }
+  // check win condition
+  if (this->State == GAME_ACTIVE && this->Levels[this->Level].IsCompleted()) {
     this->ResetLevel();
     this->ResetPlayer();
+    Effects->Chaos = true;
+    this->State = GAME_WIN;
   }
 }
 
 void Game::ProcessInput(float dt)
 {
+  if (this->State == GAME_MENU) {
+    if (this->Keys[GLFW_KEY_ENTER] && !this->KeysProcessed[GLFW_KEY_ENTER]) {
+      this->State = GAME_ACTIVE;
+      this->KeysProcessed[GLFW_KEY_ENTER] = true;
+    }
+    if (this->Keys[GLFW_KEY_W] && !this->KeysProcessed[GLFW_KEY_W]) {
+      this->Level = (this->Level + 1) % 4;
+      this->KeysProcessed[GLFW_KEY_W] = true;
+    }
+    if (this->Keys[GLFW_KEY_S] && !this->KeysProcessed[GLFW_KEY_S]) {
+      if (this->Level > 0)
+        --this->Level;
+      else
+        this->Level = 3;
+      // this->Level = (this->Level - 1) % 4;
+      this->KeysProcessed[GLFW_KEY_S] = true;
+    }
+  }
+  if (this->State == GAME_WIN) {
+    if (this->Keys[GLFW_KEY_ENTER]) {
+      this->KeysProcessed[GLFW_KEY_ENTER] = true;
+      Effects->Chaos = false;
+      this->State = GAME_MENU;
+    }
+  }
   if (this->State == GAME_ACTIVE) {
     float velocity = PLAYER_VELOCITY * dt;
     // move playerboard
@@ -184,7 +231,9 @@ void Game::ProcessInput(float dt)
 
 void Game::Render()
 {
-  if (this->State == GAME_ACTIVE) {
+  if (this->State == GAME_ACTIVE || this->State == GAME_MENU
+      || this->State == GAME_WIN)
+  {
     // begin rendering to postprocessing framebuffer
     Effects->BeginRender();
     // draw background
@@ -208,6 +257,29 @@ void Game::Render()
     Effects->EndRender();
     // render postprocessing quad
     Effects->Render(glfwGetTime());
+    // render text (don't include in postprocessing)
+    std::stringstream ss;
+    ss << this->Lives;
+    Text->RenderText("Lives:" + ss.str(), 5.0f, 5.0f, 1.0f);
+  }
+  if (this->State == GAME_MENU) {
+    Text->RenderText("Press ENTER to start", 250.0f, this->Height / 2.0f, 1.0f);
+    Text->RenderText("Press W or S to select level",
+                     245.0f,
+                     this->Height / 2.0f + 20.0f,
+                     0.75f);
+  }
+  if (this->State == GAME_WIN) {
+    Text->RenderText("You WON!!!",
+                     320.0f,
+                     this->Height / 2.0f - 20.0f,
+                     1.0f,
+                     glm::vec3(0.0f, 1.0f, 0.0f));
+    Text->RenderText("Press ENTER to retry or ESC to quit",
+                     130.0f,
+                     this->Height / 2.0f,
+                     1.0f,
+                     glm::vec3(1.0f, 1.0f, 0.0f));
   }
 }
 
@@ -221,6 +293,8 @@ void Game::ResetLevel()
     this->Levels[2].Load("levels/three.lvl", this->Width, this->Height / 2);
   else if (this->Level == 3)
     this->Levels[3].Load("levels/four.lvl", this->Width, this->Height / 2);
+
+  this->Lives = 3;
 }
 
 void Game::ResetPlayer()
@@ -241,6 +315,7 @@ void Game::ResetPlayer()
   // TODO: Rest all powerups floating down
 }
 
+// TODO: Make this a private function
 // powerups
 bool IsOtherPowerUpActive(std::vector<PowerUp>& powerUps, std::string type);
 
@@ -294,6 +369,7 @@ void Game::UpdatePowerUps(float dt)
 
 bool ShouldSpawn(unsigned int chance)
 {
+  // TODO: Use different random number generator
   unsigned int random = rand() % chance;
   return random == 0;
 }

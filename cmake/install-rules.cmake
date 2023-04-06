@@ -1,8 +1,52 @@
+# Install configuration
+set(BREAKOUT_INSTALL_ROOT ".")
+set(BREAKOUT_EXECUTABLE_COMPONENT "Breakout")
+
+# Executable
 install(
     TARGETS Breakout_exe
-    RUNTIME COMPONENT Breakout_Runtime
+    DESTINATION ${BREAKOUT_INSTALL_ROOT}
+    COMPONENT ${BREAKOUT_EXECUTABLE_COMPONENT}
 )
 
+# Resources
+install(
+    DIRECTORY
+        ${CMAKE_SOURCE_DIR}/shaders
+        ${CMAKE_SOURCE_DIR}/textures
+        ${CMAKE_SOURCE_DIR}/levels
+        ${CMAKE_SOURCE_DIR}/audio
+        ${CMAKE_SOURCE_DIR}/fonts
+    DESTINATION ${BREAKOUT_INSTALL_ROOT}
+    COMPONENT ${BREAKOUT_EXECUTABLE_COMPONENT}
+)
+
+# Dependencies (.dll)
+if (WIN32)
+    # MSVC runtime libs
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+    include(InstallRequiredSystemLibraries)
+    install(
+        PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
+        DESTINATION ${BREAKOUT_INSTALL_ROOT}
+        COMPONENT ${BREAKOUT_EXECUTABLE_COMPONENT}
+    )
+
+    if (NOT DISABLE_AUDIO)
+        install(
+            FILES "${SFML_SOURCE_DIR}/extlibs/bin/x64/openal32.dll"
+            DESTINATION ${BREAKOUT_INSTALL_ROOT}
+            COMPONENT ${BREAKOUT_EXECUTABLE_COMPONENT}
+        )
+    endif()
+endif()
+
 if(PROJECT_IS_TOP_LEVEL)
+  set(CPACK_PACKAGE_INSTALL_DIRECTORY ${PROJECT_NAME})
+  set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.md")
+
+  set(CPACK_COMPONENTS_ALL ${BREAKOUT_EXECUTABLE_COMPONENT})
+  set(CPACK_COMPONENT_BREAKOUT_REQUIRED ON)
+
   include(CPack)
 endif()

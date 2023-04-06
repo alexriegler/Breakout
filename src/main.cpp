@@ -20,6 +20,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(
     GLFWwindow* window, int key, int scancode, int action, int mode);
+void error_callback(int error, const char* description);
 
 // The Width of the screen
 const unsigned int SCREEN_WIDTH = 800;
@@ -39,14 +40,20 @@ int main(int argc, char* argv[])
 #endif
   glfwWindowHint(GLFW_RESIZABLE, false);
 
+  glfwSetErrorCallback(error_callback);
+
   GLFWwindow* window = glfwCreateWindow(
       SCREEN_WIDTH, SCREEN_HEIGHT, "Breakout", nullptr, nullptr);
+  if (!window) {
+    std::cerr << "Failed to create window\n";
+    return -1;
+  }
   glfwMakeContextCurrent(window);
 
   // glad: load all OpenGL function pointers
   // ---------------------------------------
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
+    std::cerr << "Failed to initialize GLAD\n";
     return -1;
   }
 
@@ -123,4 +130,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
   // make sure the viewport matches the new window dimensions; note that width
   // and height will be significantly larger than specified on retina displays.
   glViewport(0, 0, width, height);
+}
+
+void error_callback(int error, const char* description)
+{
+  std::cerr << "GLFW Error " << error << ": " << description << '\n';
 }

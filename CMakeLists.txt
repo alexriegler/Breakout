@@ -5,8 +5,8 @@ include(cmake/prelude.cmake)
 project(
     Breakout
     VERSION 0.1.0
-    DESCRIPTION "Short description"
-    HOMEPAGE_URL "https://example.com/"
+    DESCRIPTION "A simple Breakout clone"
+    HOMEPAGE_URL "https://github.com/alexriegler/Breakout"
     LANGUAGES CXX
 )
 
@@ -85,17 +85,17 @@ target_include_directories(Breakout_lib PRIVATE ${STB_INCLUDE_DIRS})
 
 if (NOT DISABLE_AUDIO)
     include(FetchContent)
+    set(SFML_BUILD_AUDIO    ON)
+    set(SFML_BUILD_GRAPHICS OFF)
+    set(SFML_BUILD_WINDOW   OFF)
+    set(SFML_BUILD_NETWORK  OFF)
     FetchContent_Declare(
         SFML
         GIT_REPOSITORY https://github.com/SFML/SFML.git
         GIT_TAG 2.6.x
-        SYSTEM  # Requires CMake 3.25+
+        SYSTEM
     )
     FetchContent_MakeAvailable(SFML)
-    set(SFML_BUILD_AUDIO    "ON")
-    set(SFML_BUILD_GRAPHICS "OFF")
-    set(SFML_BUILD_WINDOW   "OFF")
-    set(SFML_BUILD_NETWORK  "OFF")
     target_link_libraries(Breakout_lib PUBLIC sfml-audio)
 endif()
 

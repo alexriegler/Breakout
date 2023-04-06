@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: CI
 
 on:
   push:
@@ -184,3 +184,59 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: build/docs/html
+
+  artifacts:
+    # Upload artifacts only when builds succeed
+    needs: [sanitize, test]
+
+    strategy:
+      matrix:
+        os: [windows-2022]
+        # os: [macos-12, ubuntu-22.04, windows-2022]
+
+    runs-on: ${{ matrix.os }}
+
+    # Ensure this action is not run from other people's forks
+    if: github.ref == 'refs/heads/master'
+      && github.event_name == 'push'
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      if: matrix.os == 'ubuntu-22.04'
+      run: sudo apt-get update -q
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev -q -y
+
+    - name: Install vcpkg
+      uses: friendlyanon/setup-vcpkg@v1
+      with: { committish: "${{ env.VCPKG_COMMIT }}" }
+
+    - name: Configure
+      shell: pwsh
+      run: cmake "--preset=release-$("${{ matrix.os }}".split("-")[0])"
+
+    - name: Build
+      run: cmake --build build-release --config Release -j 2
+
+    - name: Package (Windows)
+      if: matrix.os == 'windows-2022'
+      run: cmake --build build-release --config Release --target PACKAGE
+
+    - name: Upload (Windows)
+      if: matrix.os == 'windows-2022'
+      uses: actions/upload-artifact@v3
+      with:
+        name: Breakout-win64.exe
+        path: build-release/Breakout-*.*.*-win64.exe
+
+    #- name: Package (Unix)
+    #  if: matrix.os == 'macos-12' || matrix.os == 'ubuntu-22.04'
+    #  run: cmake --build build-release --config Release --target package
+
+    #- name: Upload (Unix)
+    #  if: matrix.os == 'macos-12' || matrix.os == 'ubuntu-22.04'
+    #  uses: actions/upload-artifact@v3
+    #  with:
+    #    name: Breakout-${{ matrix.os }}
+    #    path: build-release/Breakout-*.*.*-win64.exe

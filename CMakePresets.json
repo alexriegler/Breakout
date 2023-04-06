@@ -166,6 +166,54 @@
                 "vcpkg",
                 "vcpkg-win64-static"
             ]
+        },
+        {
+            "name": "release-unix",
+            "generator": "Unix Makefiles",
+            "hidden": true,
+            "cacheVariables":
+            {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "release-win64",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "hidden": true
+        },
+        {
+            "name": "release-build",
+            "binaryDir": "${sourceDir}/build-release",
+            "hidden": true
+        },
+        {
+            "name": "release-macos",
+            "inherits":
+            [
+                "release-build",
+                "release-unix",
+                "vcpkg"
+            ]
+        },
+        {
+            "name": "release-ubuntu",
+            "inherits":
+            [
+                "release-build",
+                "release-unix",
+                "vcpkg"
+            ]
+        },
+        {
+            "name": "release-windows",
+            "inherits":
+            [
+                "release-build",
+                "release-win64",
+                "vcpkg",
+                "vcpkg-win64-static"
+            ]
         }
     ]
 }

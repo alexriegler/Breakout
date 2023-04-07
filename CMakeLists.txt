@@ -4,7 +4,7 @@ include(cmake/prelude.cmake)
 
 project(
     Breakout
-    VERSION 0.1.0
+    VERSION 1.0.0
     DESCRIPTION "A simple Breakout clone"
     HOMEPAGE_URL "https://github.com/alexriegler/Breakout"
     LANGUAGES CXX

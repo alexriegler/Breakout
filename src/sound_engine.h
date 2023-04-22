@@ -32,8 +32,8 @@ public:
 
 private:
 #ifndef DISABLE_AUDIO
-  std::map<std::string, sf::SoundBuffer> m_soundsByName;
-  std::vector<sf::Sound> m_sounds;
+  std::map<std::string, sf::SoundBuffer> m_soundBuffersByName;
+  std::map<std::string, sf::Sound> m_soundsByName;
   std::vector<std::shared_ptr<sf::Music>> m_music;
 #endif  // DISABLE_AUDIO
 };

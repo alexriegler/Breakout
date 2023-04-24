@@ -7,6 +7,7 @@
 ** option) any later version.
 ******************************************************************/
 #include "game.h"
+
 #include "game_object.h"
 #include "resource_manager.h"
 

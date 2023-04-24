@@ -6,8 +6,9 @@
 ** Creative Commons, either version 4 of the License, or (at your
 ** option) any later version.
 ******************************************************************/
-#include "resource_manager.h"
 #include "text_renderer.h"
+
+#include "resource_manager.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H

@@ -73,18 +73,16 @@ ForEachMacros:
 IncludeBlocks: Regroup
 IncludeCategories:
 # Standard library headers come before anything else
-IncludeCategories:
-# Standard library headers come before anything else
   - Regex: '^<.+\.h(pp)?>'
-    Priority: 1
-  - Regex: '.+\.h(pp)?'
-    Priority: 0
-  - Regex: '^<.*'
     Priority: 2
-  - Regex: '.*'
+  - Regex: '.+\.h(pp)?'
+    Priority: 1
+  - Regex: '^<.*'
     Priority: 3
-  - Regex: '^<[a-z_]+>'
+  - Regex: '.*'
     Priority: 4
+  - Regex: '^<[a-z_]+>'
+    Priority: 5
 IncludeIsMainRegex: ''
 IncludeIsMainSourceRegex: ''
 IndentCaseLabels: true

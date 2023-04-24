@@ -18,21 +18,11 @@
 // Container object for holding all state relevant for a single
 // game object entity. Each object in the game likely needs the
 // minimal of state as described within GameObject.
-// TODO: Change to a struct
-// TODO: Reorder members
-class GameObject
+struct GameObject
 {
-public:
-  // object state
-  glm::vec2 Position, Size, Velocity;
-  glm::vec3 Color;
-  float Rotation;
-  bool IsSolid;
-  bool Destroyed;
-  // render state
-  Texture2D Sprite;
   // constructor(s)
-  GameObject();
+  GameObject() = default;
+  // TODO: Consider reorder parameters to match member variable order.
   GameObject(glm::vec2 pos,
              glm::vec2 size,
              Texture2D sprite,
@@ -40,6 +30,21 @@ public:
              glm::vec2 velocity = glm::vec2(0.0f, 0.0f));
   // draw sprite
   virtual void Draw(SpriteRenderer& renderer);
+
+  // Data
+  // Object state
+  glm::vec2 Position {0.0f, 0.0f};
+  glm::vec2 Size {1.0f, 1.0f};
+  glm::vec2 Velocity {0.0f};
+  // TODO: Add constants for colors
+  glm::vec3 Color {1.0f};
+  float Rotation {0.0f};
+
+  bool IsSolid = false;
+  bool Destroyed = false;
+
+  // Render state
+  Texture2D Sprite {};
 };
 
 #endif

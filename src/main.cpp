@@ -27,8 +27,6 @@ const unsigned int SCREEN_WIDTH = 800;
 // The height of the screen
 const unsigned int SCREEN_HEIGHT = 600;
 
-Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
-
 int main(int argc, char* argv[])
 {
   glfwInit();
@@ -57,14 +55,21 @@ int main(int argc, char* argv[])
     return -1;
   }
 
-  glfwSetKeyCallback(window, key_callback);
-  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
   // OpenGL configuration
   // --------------------
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  // Requires OpenGL to be initialized
+  Game Breakout(SCREEN_WIDTH, SCREEN_HEIGHT);
+
+  // Set pointer for callback to call Breakout methods
+  glfwSetWindowUserPointer(window, &Breakout);
+
+  // Callbacks
+  glfwSetKeyCallback(window, key_callback);
+  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
   // initialize game
   // ---------------
@@ -111,16 +116,18 @@ int main(int argc, char* argv[])
 void key_callback(
     GLFWwindow* window, int key, int scancode, int action, int mode)
 {
+  Game& game = *(static_cast<Game*>(glfwGetWindowUserPointer(window)));
+
   // when a user presses the escape key, we set the WindowShouldClose property
   // to true, closing the application
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
     glfwSetWindowShouldClose(window, true);
   if (key >= 0 && key < 1024) {
     if (action == GLFW_PRESS)
-      Breakout.Keys[key] = true;
+      game.Keys[key] = true;
     else if (action == GLFW_RELEASE) {
-      Breakout.Keys[key] = false;
-      Breakout.KeysProcessed[key] = false;
+      game.Keys[key] = false;
+      game.KeysProcessed[key] = false;
     }
   }
 }

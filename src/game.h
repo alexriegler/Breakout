@@ -9,8 +9,14 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "ball_object.h"
 #include "game_level.h"
+#include "particle_generator.h"
+#include "post_processor.h"
 #include "power_up.h"
+#include "sound_engine.h"
+#include "sprite_renderer.h"
+#include "text_renderer.h"
 
 // clang-format off
 #include <glad/glad.h>  // GLAD must be included before GLFW
@@ -20,6 +26,7 @@
 #include <tuple>
 #include <vector>
 
+// TODO: Use enum class
 // Represents the current state of the game
 enum GameState
 {
@@ -71,7 +78,7 @@ class Game
 public:
   // constructor/destructor
   Game(unsigned int width, unsigned int height);
-  ~Game();
+
   // initialize game state (load all shaders/textures/levels)
   void Init();
   // game loop
@@ -80,32 +87,51 @@ public:
   void Render();
 
   // Public data
+  // TODO: Convert to std::array
   // TODO: Make private. These need to be public for the key_callback function.
-  bool Keys[1024];
-  bool KeysProcessed[1024];
+  bool Keys[1024] {};
+  bool KeysProcessed[1024] {};
 
 private:
   // Collisions
   void DoCollisions();
+  bool CheckCollision(GameObject& one, GameObject& two);
+  Collision CheckCollision(BallObject& one, GameObject& two);
+  Direction VectorDirection(glm::vec2 closest);
 
   // Reset
   void ResetLevel();
   void ResetPlayer();
 
   // Power ups
-  void SpawnPowerUps(GameObject& block);
   void UpdatePowerUps(float dt);
+  bool ShouldSpawn(unsigned int chance);
+  void SpawnPowerUps(GameObject& block);
+  void ActivatePowerUp(PowerUp& powerUp);
+  bool IsOtherPowerUpActive(std::vector<PowerUp>& powerUps, std::string type);
 
   // Hard mode
   void ToggleHardMode();
 
   // Data
-  GameState State;
-  unsigned int Width, Height;
+  GameState State = GAME_MENU;
+  unsigned int Width;
+  unsigned int Height;
   std::vector<GameLevel> Levels;
   std::vector<PowerUp> PowerUps;
-  unsigned int Level;
-  unsigned int Lives;
+  unsigned int Level = 0;
+  unsigned int Lives = 3;
+
+  // Game-related state data
+  SpriteRenderer Renderer {};
+  GameObject Player {};
+  BallObject Ball {};
+  ParticleGenerator Particles {};
+  PostProcessor Effects {};
+  SoundEngine soundEngine {};
+  TextRenderer Text {};
+
+  float ShakeTime = 0.0f;
 
   struct Options
   {

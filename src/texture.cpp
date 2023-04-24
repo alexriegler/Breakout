@@ -10,6 +10,7 @@
 
 #include <iostream>
 
+// TODO: Improve default ctor
 Texture2D::Texture2D()
     : Width(0)
     , Height(0)

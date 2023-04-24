@@ -40,33 +40,41 @@ struct Particle
 class ParticleGenerator
 {
 public:
-  // constructor
+  // Constructor
+  ParticleGenerator() = default;
   ParticleGenerator(Shader shader, Texture2D texture, unsigned int amount);
-  // update all particles
+
+  // Update all particles
   void Update(float dt,
               GameObject& object,
               unsigned int newParticles,
               glm::vec2 offset = glm::vec2(0.0f, 0.0f));
-  // render all particles
+
+  // Render all particles
   void Draw();
 
 private:
-  // state
-  std::vector<Particle> particles;
-  unsigned int amount;
-  // render state
-  Shader shader;
-  Texture2D texture;
-  unsigned int VAO;
-  // initializes buffer and vertex attributes
+  // Initializes buffer and vertex attributes
   void init();
-  // returns the first Particle index that's currently unused e.g. Life <= 0.0f
+
+  // Returns the first Particle index that's currently unused e.g. Life <= 0.0f
   // or 0 if no particle is currently inactive
   unsigned int firstUnusedParticle();
-  // respawns particle
+
+  // Respawns particle
   void respawnParticle(Particle& particle,
                        GameObject& object,
                        glm::vec2 offset = glm::vec2(0.0f, 0.0f));
+
+  // Data
+  // State
+  std::vector<Particle> particles {};
+  unsigned int amount {};
+
+  // Render state
+  Shader shader {};
+  Texture2D texture {};
+  unsigned int VAO {};
 };
 
 #endif

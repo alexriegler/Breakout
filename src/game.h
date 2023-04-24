@@ -37,6 +37,16 @@ enum Direction
   LEFT
 };
 
+namespace Classic
+{
+constexpr float accelerationFactor = 1.0f;
+}
+
+namespace HardMode
+{
+constexpr float accelerationFactor = 1.05f;
+}
+
 // Defines a Collision typedef that represents collision data
 typedef std::tuple<bool, Direction, glm::vec2>
     Collision;  // <collision?, what direction?, difference vector center -
@@ -59,15 +69,6 @@ const float BALL_RADIUS = 12.5f;
 class Game
 {
 public:
-  // game state
-  GameState State;
-  bool Keys[1024];
-  bool KeysProcessed[1024];
-  unsigned int Width, Height;
-  std::vector<GameLevel> Levels;
-  std::vector<PowerUp> PowerUps;
-  unsigned int Level;
-  unsigned int Lives;
   // constructor/destructor
   Game(unsigned int width, unsigned int height);
   ~Game();
@@ -77,13 +78,41 @@ public:
   void ProcessInput(float dt);
   void Update(float dt);
   void Render();
+
+  // Public data
+  // TODO: Make private. These need to be public for the key_callback function.
+  bool Keys[1024];
+  bool KeysProcessed[1024];
+
+private:
+  // Collisions
   void DoCollisions();
-  // reset
+
+  // Reset
   void ResetLevel();
   void ResetPlayer();
-  // powerups
+
+  // Power ups
   void SpawnPowerUps(GameObject& block);
   void UpdatePowerUps(float dt);
+
+  // Hard mode
+  void ToggleHardMode();
+
+  // Data
+  GameState State;
+  unsigned int Width, Height;
+  std::vector<GameLevel> Levels;
+  std::vector<PowerUp> PowerUps;
+  unsigned int Level;
+  unsigned int Lives;
+
+  struct Options
+  {
+    bool hardModeOn = false;
+    float accelerationFactor = Classic::accelerationFactor;
+  };
+  Options m_options {};
 };
 
 #endif

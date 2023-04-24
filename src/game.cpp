@@ -180,6 +180,20 @@ void Game::Update(float dt)
   }
 }
 
+/**
+ * @brief Toggles hard mode.
+ *
+ * Modifies the acceleration factor that affects the ball velocity after each
+ * bounce with the paddle.
+ */
+void Game::ToggleHardMode()
+{
+  m_options.hardModeOn = !m_options.hardModeOn;
+  m_options.accelerationFactor = m_options.hardModeOn
+      ? HardMode::accelerationFactor
+      : Classic::accelerationFactor;
+}
+
 void Game::ProcessInput(float dt)
 {
   if (this->State == GAME_MENU) {
@@ -198,6 +212,10 @@ void Game::ProcessInput(float dt)
         this->Level = 3;
       // this->Level = (this->Level - 1) % 4;
       this->KeysProcessed[GLFW_KEY_S] = true;
+    }
+    if (this->Keys[GLFW_KEY_H] && !this->KeysProcessed[GLFW_KEY_H]) {
+      ToggleHardMode();
+      this->KeysProcessed[GLFW_KEY_H] = true;
     }
   }
   if (this->State == GAME_WIN) {
@@ -268,6 +286,10 @@ void Game::Render()
                      245.0f,
                      this->Height / 2.0f + 20.0f,
                      0.75f);
+    std::string hardModeMessage = "Press H to toggle Hard Mode: ";
+    hardModeMessage += m_options.hardModeOn ? "ON" : "OFF";
+    Text->RenderText(
+        hardModeMessage, 225.0f, this->Height / 2.0f + 40.0f, 0.75f);
   }
   if (this->State == GAME_WIN) {
     Text->RenderText("You WON!!!",
@@ -544,6 +566,8 @@ void Game::DoCollisions()
                                      // total strength is not changed)
     // fix sticky paddle
     Ball->Velocity.y = -1.0f * abs(Ball->Velocity.y);
+
+    Ball->Velocity *= m_options.accelerationFactor;
 
     // if Sticky powerup is activated, also stick ball to paddle once new
     // velocity vectors were calculated

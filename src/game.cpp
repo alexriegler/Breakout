@@ -43,29 +43,20 @@ void Game::Init()
   ResourceManager::GetShader("sprite").SetMatrix4("projection", projection);
   ResourceManager::GetShader("particle").Use().SetInteger("sprite", 0);
   ResourceManager::GetShader("particle").SetMatrix4("projection", projection);
-  // load textures
-  // TODO: Set a default directory for textures, etc.
-  // TODO: Default name of a texture should the file's name without the
-  //       extension
-  ResourceManager::LoadTexture("textures/background.jpg", false, "background");
-  ResourceManager::LoadTexture("textures/awesomeface.png", true, "face");
-  ResourceManager::LoadTexture("textures/block.png", false, "block");
-  ResourceManager::LoadTexture(
-      "textures/block_solid.png", false, "block_solid");
-  ResourceManager::LoadTexture("textures/paddle.png", true, "paddle");
-  ResourceManager::LoadTexture("textures/particle.png", true, "particle");
-  ResourceManager::LoadTexture(
-      "textures/powerup_speed.png", true, "powerup_speed");
-  ResourceManager::LoadTexture(
-      "textures/powerup_sticky.png", true, "powerup_sticky");
-  ResourceManager::LoadTexture(
-      "textures/powerup_increase.png", true, "powerup_increase");
-  ResourceManager::LoadTexture(
-      "textures/powerup_confuse.png", true, "powerup_confuse");
-  ResourceManager::LoadTexture(
-      "textures/powerup_chaos.png", true, "powerup_chaos");
-  ResourceManager::LoadTexture(
-      "textures/powerup_passthrough.png", true, "powerup_passthrough");
+  // Load textures
+  ResourceManager::LoadTexture("background.jpg", false);
+  // TODO: Rename texture to face.png.
+  ResourceManager::LoadTexture("awesomeface.png", true, "face");
+  ResourceManager::LoadTexture("block.png", false);
+  ResourceManager::LoadTexture("block_solid.png", false);
+  ResourceManager::LoadTexture("paddle.png", true);
+  ResourceManager::LoadTexture("particle.png", true);
+  ResourceManager::LoadTexture("powerup_speed.png", true);
+  ResourceManager::LoadTexture("powerup_sticky.png", true);
+  ResourceManager::LoadTexture("powerup_increase.png", true);
+  ResourceManager::LoadTexture("powerup_confuse.png", true);
+  ResourceManager::LoadTexture("powerup_chaos.png", true);
+  ResourceManager::LoadTexture("powerup_passthrough.png", true);
   // set render-specific controls
   Renderer = SpriteRenderer(ResourceManager::GetShader("sprite"));
   Particles = ParticleGenerator(ResourceManager::GetShader("particle"),

@@ -55,7 +55,8 @@ add_library(
         "src/post_processor.h" "src/post_processor.cpp"
         "src/power_up.h"
         "src/sound_engine.h" "src/sound_engine.cpp"
-        "src/text_renderer.h" "src/text_renderer.cpp")
+        "src/text_renderer.h" "src/text_renderer.cpp"
+        "src/resource_location.h")
 
 target_include_directories(
     Breakout_lib ${warning_guard}

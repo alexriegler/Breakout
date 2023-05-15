@@ -37,8 +37,10 @@ jobs:
 
     runs-on: ubuntu-22.04
 
-    # Ensure this action is not run from other people's forks
-    if: github.repository_owner == 'alexriegler'
+    # We need GCC 13 for some C++20 features.
+    env:
+      CC:  gcc-13
+      CXX: g++-13
 
     steps:
     - uses: actions/checkout@v3
@@ -49,7 +51,7 @@ jobs:
 
     - name: Install dependencies
       run: sudo apt-get update -q
-        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev -q -y
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev gcc-13 g++-13 -q -y
 
     - name: Install vcpkg
       uses: friendlyanon/setup-vcpkg@v1
@@ -116,8 +118,21 @@ jobs:
 
     runs-on: ${{ matrix.os }}
 
+    # We need GCC 13 for some C++20 features.
+    env:
+      if: matrix.os == 'ubuntu-22.04'
+      CC:  gcc-13
+      CXX: g++-13
+
     steps:
     - uses: actions/checkout@v3
+
+    - name: Set up Clang
+      if: matrix.os == 'macos-12'
+      uses: egor-tensin/setup-clang@v1
+      with:
+        version: 14
+        platform: x64
 
     - name: Install static analyzers
       if: matrix.os == 'ubuntu-22.04'
@@ -131,7 +146,7 @@ jobs:
     - name: Install dependencies
       if: matrix.os == 'ubuntu-22.04'
       run: sudo apt-get update -q
-        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev -q -y
+        && sudo apt install libxinerama-dev libxcursor-dev xorg-dev libglu1-mesa-dev pkg-config libudev-dev libopenal-dev libvorbis-dev libflac-dev gcc-13 g++-13 -q -y
 
     - name: Install vcpkg
       uses: friendlyanon/setup-vcpkg@v1
